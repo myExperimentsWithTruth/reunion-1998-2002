@@ -1,0 +1,5 @@
+backend/
+backend.sh
+node_modules/
+.clasp.json
+.DS_Store

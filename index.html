@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Silver Jubilee · Pant College of Technology · Batch of 1998–2002</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0b10; --ink2:#0f111b; --card:rgba(255,255,255,.035);
+  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.22);
+  --gold:#e7c98a; --gold2:#caa25c; --steel:#9fb2cc;
+  --text:#eef1f7; --mute:#9aa0b0;
+  --serif:"Fraunces",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif; --mono:"Space Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.aurora{position:fixed;inset:0;z-index:-2;overflow:hidden}
+.aurora span{position:absolute;border-radius:50%;filter:blur(120px);opacity:.5;animation:drift 26s ease-in-out infinite}
+.aurora .a{width:60vw;height:60vw;top:-20vw;right:-15vw;background:radial-gradient(circle,#243447,transparent)}
+.aurora .b{width:48vw;height:48vw;bottom:-18vw;left:-12vw;background:radial-gradient(circle,#4a3a1f,transparent);animation-delay:-8s}
+.aurora .c{width:34vw;height:34vw;top:40%;left:55%;background:radial-gradient(circle,#2a3550,transparent);animation-delay:-16s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(4vw,3vh) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:-1;opacity:.05;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--gold2),var(--gold),#fff6df);box-shadow:0 0 14px rgba(231,201,138,.7);transition:width .15s ease}
+
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:8vh 7vw;position:relative}
+.hero .mark{font-family:var(--mono);font-size:12px;letter-spacing:.42em;color:var(--gold);text-transform:uppercase;opacity:0;transform:translateY(14px);animation:rise .9s .1s forwards}
+.hero h1{font-family:var(--serif);font-weight:340;font-size:clamp(2.9rem,8vw,7rem);line-height:.98;letter-spacing:-.02em;margin:.28em 0 .1em;max-width:16ch}
+.hero h1 .shine{background:linear-gradient(92deg,#f6f8fc,#aeb6c6 40%,#fff 55%,#8f97a8 75%,#eef1f7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.line-word{display:inline-block;opacity:0;transform:translateY(28px);animation:rise .95s forwards}
+.hero p.lede{max-width:52ch;color:#c7ccd8;font-size:clamp(1rem,1.5vw,1.18rem);margin-top:.5em;opacity:0;transform:translateY(16px);animation:rise 1s .8s forwards}
+.hero .cta{margin-top:2.4em;display:flex;gap:18px;align-items:center;opacity:0;transform:translateY(16px);animation:rise 1s 1s forwards}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;border:none;cursor:pointer;border-radius:999px;padding:16px 30px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;color:#1a1406;background:linear-gradient(100deg,var(--gold),#f4dfa9 50%,var(--gold2));text-decoration:none;display:inline-flex;align-items:center;gap:.6em}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(231,201,138,.28)}
+.btn::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-18deg);transition:left .6s}
+.btn:hover::after{left:140%}
+.hero .yr{font-family:var(--mono);color:var(--mute);letter-spacing:.3em;font-size:13px}
+.big25{position:absolute;right:4vw;bottom:-4vh;font-family:var(--serif);font-weight:300;font-size:44vh;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(231,201,138,.14);pointer-events:none;user-select:none;z-index:-1;opacity:0;animation:fade 2s 1.2s forwards}
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--mute);opacity:0;animation:fade 1s 1.6s forwards}
+
+.wrap{max-width:760px;margin:0 auto;padding:0 24px 14vh}
+.section{padding:9vh 0 2vh;opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+.section.in{opacity:1;transform:none}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:2.6em;border-bottom:1px solid var(--line);padding-bottom:1.2em}
+.sec-head .idx{font-family:var(--mono);color:var(--gold);font-size:13px;letter-spacing:.2em}
+.sec-head h2{font-family:var(--serif);font-weight:360;font-size:clamp(1.7rem,4vw,2.6rem);letter-spacing:-.01em}
+.sec-head .sub{font-family:var(--mono);color:var(--mute);font-size:11px;letter-spacing:.16em;margin-left:auto;text-transform:uppercase}
+
+.field{position:relative;margin-bottom:2.5em}
+.field label.flabel{position:absolute;left:0;top:14px;color:var(--mute);font-size:1rem;pointer-events:none;transition:.25s;transform-origin:left}
+.field input,.field select{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--text);font-family:var(--sans);font-size:1.05rem;font-weight:300;padding:14px 0;outline:none;transition:border-color .3s}
+.field select{appearance:none;cursor:pointer;color:var(--mute)}
+.field select.filled{color:var(--text)}
+.field select option{background:#12141f;color:var(--text)}
+.field .arrow{position:absolute;right:2px;top:16px;color:var(--mute);pointer-events:none;font-size:.8rem}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field input:focus~.underglow{transform:scaleX(1)}
+.underglow{position:absolute;left:0;bottom:0;height:1px;width:100%;background:linear-gradient(90deg,var(--gold),transparent);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.field input:focus+label.flabel,.field input.has+label.flabel{transform:translateY(-26px) scale(.78);color:var(--gold)}
+.req{color:var(--gold);font-family:var(--mono);font-size:.7em;vertical-align:super}
+.hint{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.05em;margin-top:.6em}
+
+.submit-wrap{margin-top:5vh;text-align:center}
+.submit-wrap .btn{padding:20px 46px;font-size:14px}
+.foot{margin-top:5vh;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--mute)}
+.success{position:fixed;inset:0;z-index:60;background:rgba(8,9,14,.9);backdrop-filter:blur(10px);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8vw}
+.success.show{display:flex;animation:fade .6s}
+.success .k{font-family:var(--mono);color:var(--gold);letter-spacing:.4em;font-size:12px;text-transform:uppercase}
+.success h3{font-family:var(--serif);font-weight:340;font-size:clamp(2.2rem,6vw,4rem);margin:.3em 0;line-height:1.05}
+.success p{color:var(--mute);max-width:40ch}
+
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes fade{to{opacity:1}}
+@media(max-width:640px){.sec-head .sub{display:none}.hero{padding:8vh 8vw}}
+</style>
+</head>
+<body>
+<div class="aurora"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
+<h1 class="sr-only">Silver Jubilee reunion registration form for the Pant College of Technology batch of 1998 to 2002</h1>
+
+<header class="hero">
+  <div class="mark">Silver Jubilee · Pant College of Technology</div>
+  <h1><span class="line-word shine" style="animation-delay:.25s">Twenty-five years</span><br>
+      <span class="line-word" style="animation-delay:.42s">on, the class of</span><br>
+      <span class="line-word" style="animation-delay:.58s"><em>&rsquo;98&ndash;&rsquo;02</em> comes home.</span></h1>
+  <p class="lede">The all-nighters, the canteen chai, the terrace arguments about the future: it began with us. Before we plan the celebration, we need to find every single one of us. One minute, that&rsquo;s all.</p>
+  <div class="cta">
+    <a href="#form" class="btn">Add your name</a>
+    <span class="yr">1998 &nbsp;&ndash;&nbsp; 2002</span>
+  </div>
+  <div class="big25">25</div>
+  <div class="scrollcue">scroll to begin</div>
+</header>
+
+<form class="wrap" id="form" autocomplete="on">
+  <section class="section" id="s1">
+    <div class="sec-head"><span class="idx">01</span><h2>Six answers, and you&rsquo;re in</h2><span class="sub">the essentials</span></div>
+
+    <div class="field"><input id="fullname" name="Name" required><label class="flabel" for="fullname">Full name <span class="req">required</span></label><span class="underglow"></span></div>
+
+    <div class="field"><input id="collegeid" name="ID No." inputmode="numeric" pattern="[0-9]{5}" maxlength="5" title="Your five-digit college ID" required><label class="flabel" for="collegeid">College ID number <span class="req">required</span></label><span class="underglow"></span>
+      <div class="hint">the five-digit ID on your college records, 25XXX</div></div>
+
+    <div class="field">
+      <select id="branch" name="Branch" required>
+        <option value="" disabled selected></option>
+        <option>Agriculture Engineering</option>
+        <option>Civil Engineering</option>
+        <option>Computer Engineering</option>
+        <option>Electrical Engineering</option>
+        <option>Electronics &amp; Communication Engineering</option>
+        <option>Mechanical Engineering</option>
+        <option>Production Engineering</option>
+      </select>
+      <label class="flabel" for="branch" style="top:-26px;transform:scale(.78);color:var(--gold)">Branch <span class="req">required</span></label>
+      <span class="arrow">&#9662;</span>
+    </div>
+
+    <div class="field"><input id="mobile" name="Mobile" type="tel" pattern="[+]?[0-9()\-\s]{10,16}" title="10 digits, or + country code and number" required><label class="flabel" for="mobile">Mobile / WhatsApp number <span class="req">required</span></label><span class="underglow"></span>
+      <div class="hint">with country code if you are outside India</div></div>
+
+    <div class="field"><input id="city" name="Current city" required><label class="flabel" for="city">Current city <span class="req">required</span></label><span class="underglow"></span></div>
+
+    <div class="field"><input id="email" name="Email" type="email" required><label class="flabel" for="email">Email <span class="req">required</span></label><span class="underglow"></span></div>
+
+    <div class="submit-wrap">
+      <button type="submit" class="btn" id="submit">Send it in <span>&#10022;</span></button>
+    </div>
+    <div class="foot">Batch of 1998&ndash;2002 · Pant College of Technology · made with love by the reunion committee</div>
+  </section>
+</form>
+
+<div class="success" id="success">
+  <div class="k">You&rsquo;re on the list</div>
+  <h3 id="successName">See you there.</h3>
+  <p>Thank you &mdash; your details are saved. Now go tag the one friend you keep meaning to call.</p>
+</div>
+
+<script>
+/* ==== CONFIG: paste your Apps Script Web App URL here to save to Google Sheets ==== */
+const ENDPOINT = "";
+
+document.querySelectorAll('.field input').forEach(el=>{
+  const sync=()=>el.classList.toggle('has', el.value.trim()!=='');
+  el.addEventListener('input',sync); el.addEventListener('blur',sync);
+});
+document.querySelectorAll('.field select').forEach(s=>{
+  s.addEventListener('change',()=>s.classList.toggle('filled', s.value!==''));
+});
+
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')}),{threshold:.15});
+document.querySelectorAll('.section').forEach(s=>io.observe(s));
+
+const bar=document.getElementById('progress');
+function updateProgress(){
+  const sc=(window.scrollY)/(document.body.scrollHeight-innerHeight);
+  bar.style.width=Math.min(100,Math.max(6,sc*100))+'%';
+}
+addEventListener('scroll',updateProgress); updateProgress();
+
+document.getElementById('form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  for(const el of document.querySelectorAll('[required]')){
+    if(!el.value.trim() || !el.checkValidity()){ el.focus(); el.style.borderColor='#e07a5f'; el.reportValidity&&el.reportValidity(); return; }
+  }
+  const data={};
+  document.querySelectorAll('#form [name]').forEach(el=>data[el.name]=el.value.trim());
+  data['Timestamp']=new Date().toISOString();
+
+  const btn=document.getElementById('submit'); btn.innerHTML='Sending&hellip;';
+  try{
+    if(ENDPOINT){
+      await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+    }
+  }catch(err){}
+  const nm=(data['Name']||'').split(' ')[0];
+  document.getElementById('successName').textContent = nm ? `See you there, ${nm}.` : 'See you there.';
+  document.getElementById('success').classList.add('show');
+});
+</script>
+</body>
+</html>
