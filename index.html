@@ -14,6 +14,7 @@
   --gold:#e7c98a; --gold2:#caa25c; --steel:#9fb2cc;
   --text:#eef1f7; --mute:#9aa0b0; --err:#e88b73;
   --serif:"Fraunces",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif; --mono:"Space Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1); /* easeOutExpo, the weighted Apple glide */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -49,7 +50,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
 .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--mute);opacity:0;animation:fade 1s 1.6s forwards}
 
 .wrap{max-width:760px;margin:0 auto;padding:0 24px 14vh}
-.section{padding:9vh 0 2vh;opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+.section{padding:9vh 0 2vh;opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease);will-change:opacity,transform}
 .section.in{opacity:1;transform:none}
 .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:2.6em;border-bottom:1px solid var(--line);padding-bottom:1.2em}
 .sec-head .idx{font-family:var(--mono);color:var(--gold);font-size:13px;letter-spacing:.2em}
@@ -105,13 +106,19 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
 .err-msg.show{opacity:1}
 /* keyboard focus: a clear ring for tab users, without touching the mouse-focus look */
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+/* scroll-reveal: elements rise, sharpen and fade in as they enter, with the weighted easing */
+[data-reveal]{opacity:0;transform:translateY(34px);filter:blur(3px);transition:opacity 1.05s var(--ease),transform 1.05s var(--ease),filter 1.05s var(--ease);will-change:opacity,transform}
+[data-reveal].in{opacity:1;transform:none;filter:none}
+.big25{will-change:transform}
 @media(max-width:640px){.sec-head .sub{display:none}.hero{padding:8vh 8vw}}
 /* honour a reader's request for less motion: show everything, animate nothing */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   .line-word,.hero .lede,.hero .cta,.big25,.scrollcue{opacity:1!important;transform:none!important}
   .section{opacity:1!important;transform:none!important}
+  [data-reveal]{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
   .aurora span{animation:none!important}
+  .big25{transform:none!important}
 }
 </style>
 </head>
@@ -137,17 +144,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 <section class="remember">
   <div class="card">
-    <div class="k">Before you scroll on</div>
-    <p>Some nights we still feel it.<br>
+    <div class="k" data-reveal>Before you scroll on</div>
+    <p data-reveal>Some nights we still feel it.<br>
       The late-night itch, even now, even after we have quit our vices.<br>
       The small pieces at <span class="places">Shama</span>, split six ways because someone was always broke. The cycle ride to <span class="places">Lalkuan</span> without a ticket, the choti line, and Mr Fareed&rsquo;s free rides to <span class="places">Lucknow</span> on the NT.<br>
       That mad cycle ride out to <span class="places">Bishtji</span>, and then all the way back.<br>
       The sweltering humidity, the powercuts, choti badi, and what not.</p>
-    <p>Much of it is gone now. The shops have changed hands, the cycles are gone, and gone too are the boys and girls we were. We have careers and grey hair and children taller than us.</p>
-    <p class="warm">We landed there by chance.<br>We are bonded now, forever.</p>
-    <p class="warm">But tell me honestly.<br>Would you not give anything to live one of those days again?</p>
-    <p>Twenty-five years is long enough to forget. It is also just long enough to come back. Put your name down, and let us find every last one of us.</p>
-    <div class="sign">The road out to Bishtji is still there. So are we.</div>
+    <p data-reveal>Much of it is gone now. The shops have changed hands, the cycles are gone, and gone too are the boys and girls we were. We have careers and grey hair and children taller than us.</p>
+    <p class="warm" data-reveal>We landed there by chance.<br>We are bonded now, forever.</p>
+    <p class="warm" data-reveal>But tell me honestly.<br>Would you not give anything to live one of those days again?</p>
+    <p data-reveal>Twenty-five years is long enough to forget. It is also just long enough to come back. Put your name down, and let us find every last one of us.</p>
+    <div class="sign" data-reveal>The road out to Bishtji is still there. So are we.</div>
   </div>
 </section>
 
@@ -205,9 +212,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 <script>
 /* ==== CONFIG ==== */
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbx42COyC7BAdodeU5qzLjPxs4nf2bgAj2zQKUpWPtAmrWgF1J07C1wx_xCV3Oc3CdUHbg/exec";
-/* Committee WhatsApp number that RECEIVES confirmations: international digits only, no + or spaces.
-   e.g. India 98765 43210 becomes "919876543210". Leave "" to hide the WhatsApp step. */
-const WA_NUMBER = "";
+/* WhatsApp confirm is ON. The committee number lives ONLY in the private Apps Script, never here,
+   so this public page and repo carry no phone number. The button routes through the endpoint,
+   which redirects to WhatsApp server-side. Set to false to hide the WhatsApp step. */
+const WA_ENABLED = true;
 
 // Phone plausibility (free, no service). Returns the tidy form if it looks like a real number.
 function phoneCheck(v){
@@ -266,8 +274,25 @@ document.querySelectorAll('.field select').forEach(s=>{
   s.addEventListener('change',()=>{ s.classList.toggle('filled', s.value!==''); if(s.checkValidity()) clearError(s); });
 });
 
-const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')}),{threshold:.15});
-document.querySelectorAll('.section').forEach(s=>io.observe(s));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// reveal each element once, a touch before it is fully in view, then stop watching it
+const io=new IntersectionObserver(es=>es.forEach(x=>{
+  if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target); }
+}),{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.section,[data-reveal]').forEach(s=>io.observe(s));
+
+// Apple-style scroll parallax: transform-only, rAF-throttled, off when motion is reduced
+if(!reduceMotion){
+  const big=document.querySelector('.big25');
+  let ticking=false;
+  function parallax(){
+    ticking=false;
+    const y=window.scrollY;
+    if(big) big.style.transform='translate3d(0,'+(y*-0.12).toFixed(1)+'px,0)';
+  }
+  addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } },{passive:true});
+  parallax();
+}
 
 const bar=document.getElementById('progress');
 function updateProgress(){
@@ -297,11 +322,11 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
   const nm=(data['Name']||'').split(' ')[0];
   document.getElementById('successName').textContent = nm ? `See you there, ${nm}.` : 'See you there.';
 
-  // WhatsApp click-to-confirm: opens a prefilled message to the committee from the person's own number
+  // WhatsApp click-to-confirm: routes through the endpoint (number stays server-side, off the public page)
   const wa=document.getElementById('waConfirm'), waNote=document.getElementById('waNote');
-  if(/^\d{10,15}$/.test(WA_NUMBER)){
+  if(WA_ENABLED){
     const msg='College of Technology 1998–2002 reunion.\nConfirming my registration.\n\nName: '+data['Name']+'\nID: '+data['ID No.']+'\nMobile: '+data['Mobile'];
-    wa.href='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg);
+    wa.href=ENDPOINT+'?wa=1&text='+encodeURIComponent(msg);
     wa.hidden=false; waNote.hidden=false;
   } else { wa.hidden=true; waNote.hidden=true; }
 
