@@ -366,6 +366,7 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
   if(firstBad){ firstBad.focus(); firstBad.scrollIntoView({behavior:'smooth',block:'center'}); return; }
   const data={};
   document.querySelectorAll('#form [name]').forEach(el=>data[el.name]=el.value.trim());
+  const pn=phoneCheck(data['Mobile']); if(pn.ok) data['Mobile']=pn.pretty;  // save the exact form the read-back promised
   data['Timestamp']=new Date().toISOString();
 
   const btn=document.getElementById('submit'); btn.innerHTML='Sending&hellip;';
