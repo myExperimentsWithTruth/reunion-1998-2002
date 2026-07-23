@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Silver Jubilee · Pant College of Technology · Batch of 1998–2002</title>
+<title>Silver Jubilee · College of Technology · Batch of 1998–2002</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -81,6 +81,14 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
 
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes fade{to{opacity:1}}
+.remember{max-width:760px;margin:0 auto;padding:2vh 24px 4vh}
+.remember .card{position:relative;border:1px solid var(--line);border-radius:20px;padding:clamp(28px,5vw,52px);background:linear-gradient(160deg,rgba(231,201,138,.05),rgba(255,255,255,.02))}
+.remember .k{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:1.6em}
+.remember p{font-family:var(--serif);font-weight:330;font-size:clamp(1.15rem,2.4vw,1.55rem);line-height:1.7;color:#e6e9f2;margin-bottom:1.1em;letter-spacing:-.005em}
+.remember p:last-of-type{margin-bottom:0}
+.remember .warm{color:var(--gold);font-style:italic}
+.remember .places{font-family:var(--sans);font-weight:400}
+.remember .sign{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--mute);margin-top:2.2em;text-transform:uppercase}
 @media(max-width:640px){.sec-head .sub{display:none}.hero{padding:8vh 8vw}}
 </style>
 </head>
@@ -88,10 +96,10 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
 <div class="aurora"><span class="a"></span><span class="b"></span><span class="c"></span></div>
 <div class="grain"></div>
 <div class="progress" id="progress"></div>
-<h1 class="sr-only">Silver Jubilee reunion registration form for the Pant College of Technology batch of 1998 to 2002</h1>
+<h1 class="sr-only">Silver Jubilee reunion registration form for the College of Technology batch of 1998 to 2002</h1>
 
 <header class="hero">
-  <div class="mark">Silver Jubilee · Pant College of Technology</div>
+  <div class="mark">Silver Jubilee · College of Technology</div>
   <h1><span class="line-word shine" style="animation-delay:.25s">Twenty-five years</span><br>
       <span class="line-word" style="animation-delay:.42s">on, the class of</span><br>
       <span class="line-word" style="animation-delay:.58s"><em>&rsquo;98&ndash;&rsquo;02</em> comes home.</span></h1>
@@ -103,6 +111,17 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
   <div class="big25">25</div>
   <div class="scrollcue">scroll to begin</div>
 </header>
+
+<section class="remember">
+  <div class="card">
+    <div class="k">Before you scroll on</div>
+    <p>Some evenings we still taste it. The smoky plate at <span class="places">Shama Chicken</span>, split six ways because someone was always broke. The bus that emptied us into <span class="places">Lalkua</span>. The dust of <span class="places">Nagla</span> on the way back. That mad <span class="places">cycle ride out to Bishtji</span>, legs burning, nobody willing to be the first to stop.</p>
+    <p>Much of it is gone now. The shops have changed hands, the cycles have rusted, the boys and girls we were have careers and grey hair and children taller than us.</p>
+    <p class="warm">But tell me honestly. Would you not give anything to live one of those days again?</p>
+    <p>Twenty-five years is long enough to forget. It is also just long enough to come back. Put your name down, and let us find every last one of us.</p>
+    <div class="sign">The road out to Bishtji is still there. So are we.</div>
+  </div>
+</section>
 
 <form class="wrap" id="form" autocomplete="on">
   <section class="section" id="s1">
@@ -139,7 +158,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
     <div class="submit-wrap">
       <button type="submit" class="btn" id="submit">Send it in <span>&#10022;</span></button>
     </div>
-    <div class="foot">Batch of 1998&ndash;2002 · Pant College of Technology · made with love by the reunion committee</div>
+    <div class="foot">Batch of 1998&ndash;2002 · College of Technology · made with love by the reunion committee</div>
   </section>
 </form>
 
