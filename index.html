@@ -90,6 +90,8 @@ body{background:var(--ink);color:var(--text);font-family:var(--sans);font-weight
 .remember .warm{color:var(--gold);font-style:italic}
 .remember .places{font-family:var(--sans);font-weight:400}
 .remember .sign{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--mute);margin-top:2.2em;text-transform:uppercase}
+.readback{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.05em;margin-top:.5em;opacity:0;transition:opacity .2s}
+.readback.show{opacity:.85}
 .err-msg{font-family:var(--mono);font-size:11px;color:var(--err);letter-spacing:.04em;margin-top:.6em;min-height:0;opacity:0;transition:opacity .2s}
 .err-msg.show{opacity:1}
 /* keyboard focus: a clear ring for tab users, without touching the mouse-focus look */
@@ -165,8 +167,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <span class="arrow">&#9662;</span>
     </div>
 
-    <div class="field"><input id="mobile" name="Mobile" type="tel" autocomplete="tel" pattern="[+]?[0-9()\-\s]{10,16}" title="10 digits, or + country code and number" required><label class="flabel" for="mobile">Mobile / WhatsApp number <span class="req">required</span></label><span class="underglow"></span>
-      <div class="hint">with country code if you are outside India</div></div>
+    <div class="field"><input id="mobile" name="Mobile" type="tel" autocomplete="tel" inputmode="tel" required><label class="flabel" for="mobile">Mobile / WhatsApp number <span class="req">required</span></label><span class="underglow"></span>
+      <div class="hint">a 10-digit Indian mobile, or start with + and your country code if you are abroad</div>
+      <div class="readback" id="mobile-read" aria-live="polite"></div></div>
 
     <div class="field"><input id="city" name="Current city" autocomplete="address-level2" required><label class="flabel" for="city">Current city <span class="req">required</span></label><span class="underglow"></span></div>
 
@@ -189,11 +192,37 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ==== CONFIG: paste your Apps Script Web App URL here to save to Google Sheets ==== */
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbx42COyC7BAdodeU5qzLjPxs4nf2bgAj2zQKUpWPtAmrWgF1J07C1wx_xCV3Oc3CdUHbg/exec";
 
+// Phone plausibility (free, no service). Returns the tidy form if it looks like a real number.
+function phoneCheck(v){
+  v = String(v||'').replace(/[^\d+]/g,'');
+  if(v.charAt(0)==='+'){                                  // international: + country code + 7 to 14 more
+    var di = v.slice(1).replace(/\D/g,'');
+    return (di.length>=8 && di.length<=15) ? {ok:true, pretty:'+'+di} : {ok:false};
+  }
+  var d = v.replace(/\D/g,'');
+  if(d.length===12 && d.substr(0,2)==='91') d = d.slice(2);   // 91XXXXXXXXXX
+  if(d.length===11 && d.charAt(0)==='0')   d = d.slice(1);    // 0XXXXXXXXXX
+  if(d.length===10 && '6789'.indexOf(d.charAt(0))>=0)         // Indian mobile: 10 digits, starts 6-9
+    return {ok:true, pretty:'+91 '+d.slice(0,5)+' '+d.slice(5)};
+  return {ok:false};
+}
+var mobileEl = document.getElementById('mobile');
+var mobileRead = document.getElementById('mobile-read');
+function syncMobile(){
+  var v = mobileEl.value.trim();
+  if(!v){ mobileEl.setCustomValidity(''); mobileRead.classList.remove('show'); mobileRead.textContent=''; return; }
+  var r = phoneCheck(v);
+  mobileEl.setCustomValidity(r.ok ? '' : 'invalid');
+  if(r.ok){ mobileRead.textContent = 'We will save this as  '+r.pretty; mobileRead.classList.add('show'); }
+  else { mobileRead.classList.remove('show'); mobileRead.textContent=''; }
+}
+mobileEl.addEventListener('input', syncMobile);
+
 // one friendly, plain-language message per failing field
 function messageFor(el){
   if(el.validity.valueMissing) return 'This one we do need.';
   if(el.id==='collegeid') return 'Five digits, like 25XXX.';
-  if(el.id==='mobile')     return 'A number we can reach you on, 10 digits or with a + country code.';
+  if(el.id==='mobile')     return 'A 10-digit Indian mobile starting 6 to 9, or a + and your country code.';
   if(el.validity.typeMismatch && el.type==='email') return 'That email does not look complete yet.';
   return 'Please check this one.';
 }
