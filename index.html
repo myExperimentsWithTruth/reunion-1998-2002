@@ -219,8 +219,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="field"><span class="fidx">01</span><input id="fullname" name="Name" autocomplete="name" required><label class="flabel" for="fullname">Full name <span class="req">required</span></label><span class="underglow"></span></div>
 
-    <div class="field"><span class="fidx">02</span><input id="collegeid" name="ID No." inputmode="numeric" pattern="[0-9]{5}" maxlength="5" title="Your five-digit college ID" required><label class="flabel" for="collegeid">College ID number <span class="req">required</span></label><span class="underglow"></span>
-      <div class="hint">the five-digit ID on your college records, 25XXX</div></div>
+    <div class="field"><span class="fidx">02</span><input id="collegeid" name="ID No." inputmode="numeric" pattern="[0-9]{5}" maxlength="5" title="Your five-digit college ID"><label class="flabel" for="collegeid">College ID number <span class="req">if you remember it</span></label><span class="underglow"></span>
+      <div class="hint">the five-digit ID on your college records, 25XXX. Blank is fine, we will match you by name</div></div>
 
     <div class="field"><span class="fidx">03</span>
       <select id="branch" name="Branch" required>
@@ -302,7 +302,7 @@ mobileEl.addEventListener('input', syncMobile);
 /* ==== friendly inline errors ==== */
 function messageFor(el){
   if(el.validity.valueMissing) return 'This one we do need.';
-  if(el.id==='collegeid') return 'Five digits, like 25XXX.';
+  if(el.id==='collegeid') return 'Five digits, like 25XXX. Or leave it blank.';
   if(el.id==='mobile')     return 'A 10-digit Indian mobile starting 6 to 9, or a + and your country code.';
   if(el.validity.typeMismatch && el.type==='email') return 'That email does not look complete yet.';
   return 'Please check this one.';
@@ -359,8 +359,10 @@ if(!reduceMotion){
 document.getElementById('form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   let firstBad=null;
-  document.querySelectorAll('#form [required]').forEach(el=>{
-    if(!el.value.trim() || !el.checkValidity()){ showError(el); if(!firstBad) firstBad=el; }
+  document.querySelectorAll('#form input, #form select').forEach(el=>{
+    if(el.name==='hp_field') return;
+    const bad=(el.required && !el.value.trim()) || (el.value.trim() && !el.checkValidity());
+    if(bad){ showError(el); if(!firstBad) firstBad=el; }
     else clearError(el);
   });
   if(firstBad){ firstBad.focus(); firstBad.scrollIntoView({behavior:'smooth',block:'center'}); return; }
@@ -381,7 +383,8 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
   // WhatsApp confirm: fetch the direct wa.me link from the private backend at runtime.
   const wa=document.getElementById('waConfirm'), waNote=document.getElementById('waNote');
   if(WA_ENABLED){
-    const msg='College of Technology 1998–2002 reunion.\nConfirming my registration.\n\nName: '+data['Name']+'\nID: '+data['ID No.']+'\nMobile: '+data['Mobile'];
+    const idLine = data['ID No.'] ? '\nID: '+data['ID No.'] : '';
+    const msg='College of Technology 1998–2002 reunion.\nConfirming my registration.\n\nName: '+data['Name']+idLine+'\nMobile: '+data['Mobile'];
     wa.href=ENDPOINT+'?wa=1&text='+encodeURIComponent(msg);   // fallback route if the direct link has not arrived
     window.__waReady=function(base){
       if(/^https:\/\/wa\.me\/\d+$/.test(String(base))) wa.href=base+'?text='+encodeURIComponent(msg);
