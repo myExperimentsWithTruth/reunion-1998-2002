@@ -1,5 +1,7 @@
 backend/
 backend.sh
+supabase/
+backend-supabase.sh
 node_modules/
 .clasp.json
 .DS_Store
