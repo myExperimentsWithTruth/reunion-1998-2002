@@ -98,8 +98,8 @@ h1 em{font-style:italic;color:var(--gold)}
   <div class="ch"><span class="no">02</span><span class="rule"></span><span class="name">Recently home</span></div>
   <div id="recent"><p class="empty">The board is waiting for its first name.</p></div>
 
-  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">The register &middot; who is in, who is missing</span></div>
-  <p class="sub" style="margin-bottom:2em">Names and branches only, nothing more. <span style="color:var(--gold-hi)">Gold means home.</span> Dim means we are still looking. See a name you can reach? Go get them.</p>
+  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">The register &middot; who is home</span></div>
+  <p class="sub" style="margin-bottom:2em">Every name that has come home so far, branch by branch. Names only, nothing more. Missing yours? The form takes a minute.</p>
   <div id="register"><p class="empty">Opening the register&hellip;</p></div>
 
   <div class="cta">
@@ -158,9 +158,9 @@ async function load(){
       const groups={};
       dir.forEach(x=>{const b=x.branch||'Being placed on the records';(groups[b]=groups[b]||[]).push(x)});
       document.getElementById('register').innerHTML=Object.keys(groups).map(b=>{
-        const g=groups[b], inN=g.filter(x=>x.registered).length;
-        return '<div class="reg-branch"><h4>'+esc(b)+'<i>'+inN+' of '+g.length+' home</i></h4><div class="chips">'
-          +g.map(x=>'<span class="'+(x.registered?'in':'out')+'">'+esc(x.name)+'</span>').join('')
+        const g=groups[b];
+        return '<div class="reg-branch"><h4>'+esc(b)+'<i>'+g.length+' home</i></h4><div class="chips">'
+          +g.map(x=>'<span class="in">'+esc(x.name)+'</span>').join('')
           +'</div></div>';
       }).join('');
     }
