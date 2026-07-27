@@ -54,13 +54,13 @@ h1 em{font-style:italic;color:var(--gold)}
 .branch .bar{margin:8px 0 0}
 .branch.leader .bn{color:var(--gold)}
 
-ol.refs{list-style:none;counter-reset:r}
-ol.refs li{counter-increment:r;display:flex;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
-ol.refs li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--gold)}
-ol.refs .who{font-family:var(--serif);font-size:1.1rem;color:var(--text);flex:1}
-ol.refs .n{font-family:var(--mono);font-size:12px;color:var(--mute)}
-ol.refs li:first-child .who{color:var(--gold)}
-ol.refs li:first-child::after{content:"recruiter-in-chief";font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.reg-branch{margin-bottom:2.4em}
+.reg-branch h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin-bottom:1em}
+.reg-branch h4 i{font-style:normal;color:var(--gold);letter-spacing:.1em;margin-left:.8em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-family:var(--mono);font-size:11.5px;border-radius:99px;padding:7px 14px}
+.chips .in{color:var(--gold-hi);border:1px solid var(--gold-dim)}
+.chips .out{color:var(--faint);border:1px solid var(--line)}
 
 .recent{display:flex;flex-wrap:wrap;gap:10px}
 .recent span{font-family:var(--mono);font-size:12px;color:var(--soft);border:1px solid var(--line-strong);border-radius:99px;padding:8px 16px}
@@ -95,11 +95,12 @@ ol.refs li:first-child::after{content:"recruiter-in-chief";font-family:var(--mon
   <div class="ch"><span class="no">01</span><span class="rule"></span><span class="name">The branch battle</span></div>
   <div id="branches"><p class="empty">Loading the standings&hellip;</p></div>
 
-  <div class="ch"><span class="no">02</span><span class="rule"></span><span class="name">Recruiters &middot; who brought whom</span></div>
-  <div id="refs"><p class="empty">Nobody has claimed a recruit yet. Share your link from the registration page; the first name on this board owns it for life.</p></div>
-
-  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">Recently home</span></div>
+  <div class="ch"><span class="no">02</span><span class="rule"></span><span class="name">Recently home</span></div>
   <div id="recent"><p class="empty">The board is waiting for its first name.</p></div>
+
+  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">The register &middot; who is in, who is missing</span></div>
+  <p class="sub" style="margin-bottom:2em">Names and branches only, nothing more. <span style="color:var(--gold-hi)">Gold means home.</span> Dim means we are still looking. See a name you can reach? Go get them.</p>
+  <div id="register"><p class="empty">Opening the register&hellip;</p></div>
 
   <div class="cta">
     <a class="btn" href="index.html#register">Add your name</a>
@@ -146,16 +147,22 @@ async function load(){
         +'<div class="bar"><i style="width:'+Math.max(1,pct)+'%"></i></div></div>';
     }).join('');
 
-    const refs=await get('stats_referrers?select=*');
-    if(refs.length){
-      document.getElementById('refs').innerHTML='<ol class="refs">'+refs.map(r=>
-        '<li><span class="who">'+esc(r.referrer)+'</span><span class="n">brought '+r.brought+'</span></li>').join('')+'</ol>';
-    }
-
     const rec=await get('stats_recent?select=*');
     if(rec.length){
       document.getElementById('recent').innerHTML='<div class="recent">'+rec.map(x=>
-        '<span>'+esc(x.first_name)+(x.last_initial?' '+esc(x.last_initial)+'.':'')+' <i>&middot; '+esc((x.branch||'').replace(' Engineering',''))+' &middot; '+esc(x.current_city||'')+'</i></span>').join('')+'</div>';
+        '<span>'+esc(x.first_name)+(x.last_initial?' '+esc(x.last_initial)+'.':'')+' <i>&middot; '+esc((x.branch||'').replace(' Engineering',''))+'</i></span>').join('')+'</div>';
+    }
+
+    const dir=await get('stats_directory?select=*&order=branch,name&limit=1000');
+    if(dir.length){
+      const groups={};
+      dir.forEach(x=>{const b=x.branch||'Being placed on the records';(groups[b]=groups[b]||[]).push(x)});
+      document.getElementById('register').innerHTML=Object.keys(groups).map(b=>{
+        const g=groups[b], inN=g.filter(x=>x.registered).length;
+        return '<div class="reg-branch"><h4>'+esc(b)+'<i>'+inN+' of '+g.length+' home</i></h4><div class="chips">'
+          +g.map(x=>'<span class="'+(x.registered?'in':'out')+'">'+esc(x.name)+'</span>').join('')
+          +'</div></div>';
+      }).join('');
     }
 
     const now=new Date();

@@ -246,9 +246,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="field"><span class="fidx">06</span><input id="email" name="Email" type="email" autocomplete="email" required><label class="flabel" for="email">Email <span class="req">required</span></label><span class="underglow"></span></div>
 
-    <div class="field"><span class="fidx">07</span><input id="refby" name="Referred by"><label class="flabel" for="refby">Who sent you here? <span class="req">optional</span></label><span class="underglow"></span>
-      <div class="hint">name the batchmate who nudged you. They take the credit on the scoreboard</div></div>
-
     <div class="submit-wrap">
       <button type="submit" class="btn" id="submit">Send it in <span>&#10022;</span></button>
       <p class="consent">By sending this, you agree that the reunion committee may contact you on the number and email you share. Your details are collected only for the reunion, and they stay within the batch.</p>
@@ -267,7 +264,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
     Send my details on WhatsApp
   </a>
   <p class="wa-note" id="waNote" hidden>The message opens in your own WhatsApp with everything filled in, so we also learn we can reach you on this number. Nothing goes out until you press send.</p>
-  <a id="waShare" class="btn ghost" target="_blank" rel="noopener" style="margin-top:1.2em" hidden>Recruit the batch</a>
   <a href="leaderboard.html" class="btn ghost" style="margin-top:1.2em">See the scoreboard</a>
 </div>
 
@@ -280,12 +276,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 const SUPABASE_URL  = "https://ngfhcbtbulgeoaxlhmwk.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU";
 const WA_ENABLED = true;
-
-/* ==== referral: arriving through someone's recruit link credits them ==== */
-(function(){
-  const ref=new URLSearchParams(location.search).get('ref');
-  if(ref){ const el=document.getElementById('refby'); el.value=ref.slice(0,80); el.classList.add('has'); }
-})();
 
 /* ==== phone plausibility (free, no service) ==== */
 function phoneCheck(v){
@@ -395,22 +385,12 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
         headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,
                  'Authorization':'Bearer '+SUPABASE_ANON,'Prefer':'return=minimal'},
         body:JSON.stringify({ name:data['Name'], id_no:data['ID No.'], branch:data['Branch'],
-                              mobile:data['Mobile'], current_city:data['Current city'], email:data['Email'],
-                              referred_by:data['Referred by']||'' })
+                              mobile:data['Mobile'], current_city:data['Current city'], email:data['Email'] })
       });
     }
   }catch(err){}
   const nm=(data['Name']||'').split(' ')[0];
   document.getElementById('successName').textContent = nm ? `You are now connected, ${nm}.` : 'You are now connected.';
-
-  // Personal recruit link: registrations arriving through it credit this person on the scoreboard.
-  const share=document.getElementById('waShare');
-  if(!isBot && data['Name']){
-    const myLink='https://myexperimentswithtruth.github.io/reunion-1998-2002/?ref='+encodeURIComponent(data['Name']);
-    const inv='I have put my name down for our Silver Jubilee reunion. Batch of 1998-2002, College of Technology, Pantnagar. 25 years!\n\nAdd yours here, it takes one minute:\n'+myLink;
-    share.href='https://wa.me/?text='+encodeURIComponent(inv);
-    share.hidden=false;
-  }
 
   // WhatsApp submission: the full registration rides in the message. The wa.me link comes from
   // a private function at runtime; the number never appears in this page's source. If the
@@ -424,8 +404,7 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
       +'Branch: '+data['Branch']+'\n'
       +'Mobile: '+data['Mobile']+'\n'
       +'Current city: '+data['Current city']+'\n'
-      +'Email: '+data['Email']
-      +(data['Referred by']?'\nReferred by: '+data['Referred by']:'');
+      +'Email: '+data['Email'];
     fetch(SUPABASE_URL+'/functions/v1/wa-link',{
       headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON}
     }).then(r=>r.json()).then(j=>{
