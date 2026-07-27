@@ -24,7 +24,7 @@ jobs:
         run: |
           BODY=$(curl -sf "$URL/rest/v1/stats_totals?select=*" -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
           echo "$BODY"
-          echo "$BODY" | grep -q '"batch_size":269'
+          echo "$BODY" | grep -qE '"batch_size":2[0-9]{2}'   # roster grows as records gaps are fixed
       - name: WhatsApp link function must be configured
         run: |
           curl -sf "$URL/functions/v1/wa-link" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" | grep -q 'wa.me'
