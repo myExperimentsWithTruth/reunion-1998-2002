@@ -1,0 +1,17 @@
+# Keeps the free-tier Supabase project awake (it pauses after ~a week of silence).
+# The anon key here is the same public, insert-only key already shipped in index.html.
+name: keepalive
+on:
+  schedule:
+    - cron: '17 3 */3 * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -s -o /dev/null -w 'rest %{http_code}
+'             'https://ngfhcbtbulgeoaxlhmwk.supabase.co/rest/v1/responses?select=id&limit=1'             -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU'
+          curl -s -o /dev/null -w 'fn %{http_code}
+'             'https://ngfhcbtbulgeoaxlhmwk.supabase.co/functions/v1/wa-link'             -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU'
