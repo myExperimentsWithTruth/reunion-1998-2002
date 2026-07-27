@@ -257,20 +257,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="success" id="success">
   <div class="k">Welcome home</div>
   <h3 id="successName">You are now connected.</h3>
-  <p>We will reach out to you. Until then, tell the one friend you keep meaning to call.</p>
+  <p id="successLead">We will reach out to you. Until then, tell the one friend you keep meaning to call.</p>
   <a id="waConfirm" class="btn wa" target="_blank" rel="noopener" hidden>
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12 2a10 10 0 0 0-8.53 15.26L2 22l4.87-1.42A10 10 0 1 0 12 2z"/></svg>
-    Confirm on WhatsApp
+    Send my details on WhatsApp
   </a>
-  <p class="wa-note" id="waNote" hidden>One tap sends us a short note from your number, so we know the number is really yours. It is how we confirm we can reach you.</p>
+  <p class="wa-note" id="waNote" hidden>The message opens in your own WhatsApp with everything filled in, so we also learn we can reach you on this number. Nothing goes out until you press send.</p>
 </div>
 
 <script>
 /* ==== CONFIG ==== */
+/* Google Sheets backend. Submissions post here, and the wa.me link is fetched from here at
+   runtime, so the committee WhatsApp number lives ONLY in the private Apps Script, never in
+   this public file. If the backend is down, the POST fails silently and the WhatsApp button
+   simply does not appear; no Google page is ever navigated to. */
 const ENDPOINT = "https://script.google.com/macros/s/AKfycbx42COyC7BAdodeU5qzLjPxs4nf2bgAj2zQKUpWPtAmrWgF1J07C1wx_xCV3Oc3CdUHbg/exec";
-/* WhatsApp confirm is ON. The committee number lives ONLY in the private Apps Script, never in this
-   public file. At success, the direct wa.me link is fetched from the endpoint at runtime, so tapping
-   the button opens WhatsApp straight away with no script.google.com navigation. */
 const WA_ENABLED = true;
 
 /* ==== phone plausibility (free, no service) ==== */
@@ -380,20 +381,30 @@ document.getElementById('form').addEventListener('submit', async (e)=>{
   const nm=(data['Name']||'').split(' ')[0];
   document.getElementById('successName').textContent = nm ? `You are now connected, ${nm}.` : 'You are now connected.';
 
-  // WhatsApp confirm: fetch the direct wa.me link from the private backend at runtime.
-  const wa=document.getElementById('waConfirm'), waNote=document.getElementById('waNote');
+  // WhatsApp submission: the full registration rides in the message. The wa.me link is fetched
+  // from the private backend at runtime; the number never appears in this page's source. If the
+  // backend does not answer, the button stays hidden rather than routing through a Google page.
+  const wa=document.getElementById('waConfirm'), waNote=document.getElementById('waNote'), waLead=document.getElementById('successLead');
+  wa.hidden=true; waNote.hidden=true;
   if(WA_ENABLED){
-    const idLine = data['ID No.'] ? '\nID: '+data['ID No.'] : '';
-    const msg='College of Technology 1998–2002 reunion.\nConfirming my registration.\n\nName: '+data['Name']+idLine+'\nMobile: '+data['Mobile'];
-    wa.href=ENDPOINT+'?wa=1&text='+encodeURIComponent(msg);   // fallback route if the direct link has not arrived
+    const msg='College of Technology 1998–2002 reunion. My registration:\n\n'
+      +'Name: '+data['Name']+'\n'
+      +'College ID: '+(data['ID No.']||'not remembered')+'\n'
+      +'Branch: '+data['Branch']+'\n'
+      +'Mobile: '+data['Mobile']+'\n'
+      +'Current city: '+data['Current city']+'\n'
+      +'Email: '+data['Email'];
     window.__waReady=function(base){
-      if(/^https:\/\/wa\.me\/\d+$/.test(String(base))) wa.href=base+'?text='+encodeURIComponent(msg);
+      if(!/^https:\/\/wa\.me\/\d+$/.test(String(base))) return;
+      wa.href=base+'?text='+encodeURIComponent(msg);
+      document.getElementById('successName').textContent = nm ? `One more tap, ${nm}.` : 'One more tap.';
+      waLead.textContent='Your answers are packed into one WhatsApp message, addressed to the reunion committee. Tap below and press send. That is your registration, delivered.';
+      wa.hidden=false; waNote.hidden=false;
     };
     const s=document.createElement('script');
     s.src=ENDPOINT+'?wa=js&cb=__waReady';
     document.body.appendChild(s);
-    wa.hidden=false; waNote.hidden=false;
-  } else { wa.hidden=true; waNote.hidden=true; }
+  }
 
   document.getElementById('success').classList.add('show');
 });
