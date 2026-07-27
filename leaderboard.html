@@ -90,6 +90,7 @@ ol.refs li:first-child::after{content:"recruiter-in-chief";font-family:var(--mon
   <div class="bignum"><span class="n" id="regN">–</span><span class="of">of <span id="batchN">269</span> home</span></div>
   <div class="bar"><i id="totalBar"></i></div>
   <div class="milestone" id="milestone">counting&hellip;</div>
+  <div class="milestone" id="stamp" style="margin-top:6px"></div>
 
   <div class="ch"><span class="no">01</span><span class="rule"></span><span class="name">The branch battle</span></div>
   <div id="branches"><p class="empty">Loading the standings&hellip;</p></div>
@@ -156,10 +157,23 @@ async function load(){
       document.getElementById('recent').innerHTML='<div class="recent">'+rec.map(x=>
         '<span>'+esc(x.first_name)+(x.last_initial?' '+esc(x.last_initial)+'.':'')+' <i>&middot; '+esc((x.branch||'').replace(' Engineering',''))+' &middot; '+esc(x.current_city||'')+'</i></span>').join('')+'</div>';
     }
+
+    const now=new Date();
+    let stamp='board refreshed '+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(rec.length){
+      const last=new Date(rec[0].created_at);
+      const sameDay=last.toDateString()===now.toDateString();
+      stamp+=' · latest name landed '+(sameDay
+        ? 'today '+last.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+        : last.toLocaleDateString([],{day:'numeric',month:'short'})+', '+last.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+    }
+    document.getElementById('stamp').textContent=stamp;
   }catch(e){}
 }
 load();
 setInterval(load, 90000);
+// Fresh numbers the moment anyone comes back to the tab, first thing in the morning included.
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
 </script>
 </body>
 </html>
