@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Live scoreboard of the Silver Jubilee reunion registrations. Branch against branch, batch of 1998 to 2002." />
+<title>The Scoreboard · Silver Jubilee · Batch of 1998–2002</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Hanken+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0807; --text:#F3EDE3; --soft:#D9D1C3; --mute:#9A9184; --faint:#6E675C;
+  --gold:#E4B968; --gold-hi:#F4DCA4; --gold-dim:rgba(228,185,104,.38);
+  --line:rgba(243,237,227,.13); --line-strong:rgba(243,237,227,.24);
+  --serif:"Fraunces",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif; --mono:"Space Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--soft);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:#221703}
+a{color:inherit}
+.glow{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.glow span{position:absolute;border-radius:50%;filter:blur(130px);opacity:.42;animation:drift 44s ease-in-out infinite}
+.glow .a{width:64vw;height:64vw;top:-24vw;right:-18vw;background:radial-gradient(circle,#3c2c14,transparent 70%)}
+.glow .b{width:52vw;height:52vw;bottom:-20vw;left:-14vw;background:radial-gradient(circle,#1d2433,transparent 70%);animation-delay:-14s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3vw,2vh) scale(1.09)}}
+.grain{position:fixed;inset:0;z-index:-1;opacity:.055;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{max-width:880px;margin:0 auto;padding:10vh 24px 12vh}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.44em;color:var(--gold);text-transform:uppercase}
+h1{font-family:var(--serif);font-weight:310;font-size:clamp(2.4rem,7vw,4.6rem);line-height:1.05;letter-spacing:-.03em;color:var(--text);margin:.35em 0 .2em}
+h1 em{font-style:italic;color:var(--gold)}
+.sub{color:var(--mute);max-width:52ch}
+
+.bignum{display:flex;align-items:baseline;gap:.35em;margin:1.4em 0 .5em;font-family:var(--serif)}
+.bignum .n{font-size:clamp(4rem,14vw,8rem);font-weight:320;color:var(--gold);line-height:1}
+.bignum .of{font-size:clamp(1.1rem,2.4vw,1.6rem);color:var(--faint)}
+.bar{height:6px;border-radius:99px;background:rgba(243,237,227,.08);overflow:hidden;margin:12px 0 8px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width 1.2s var(--ease)}
+.milestone{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--faint)}
+
+.ch{display:flex;align-items:baseline;gap:18px;margin:9vh 0 4vh}
+.ch .no{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--gold)}
+.ch .rule{flex:1;height:1px;background:var(--line);align-self:center}
+.ch .name{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
+
+.branch{margin-bottom:1.6em}
+.branch .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.branch .bn{font-family:var(--serif);font-size:1.15rem;color:var(--text);font-weight:340}
+.branch .lead-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#0d0b08;background:linear-gradient(100deg,var(--gold),var(--gold-hi));border-radius:99px;padding:3px 10px;text-transform:uppercase}
+.branch .score{font-family:var(--mono);font-size:12px;color:var(--mute);white-space:nowrap}
+.branch .bar{margin:8px 0 0}
+.branch.leader .bn{color:var(--gold)}
+
+ol.refs{list-style:none;counter-reset:r}
+ol.refs li{counter-increment:r;display:flex;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+ol.refs li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--gold)}
+ol.refs .who{font-family:var(--serif);font-size:1.1rem;color:var(--text);flex:1}
+ol.refs .n{font-family:var(--mono);font-size:12px;color:var(--mute)}
+ol.refs li:first-child .who{color:var(--gold)}
+ol.refs li:first-child::after{content:"recruiter-in-chief";font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+
+.recent{display:flex;flex-wrap:wrap;gap:10px}
+.recent span{font-family:var(--mono);font-size:12px;color:var(--soft);border:1px solid var(--line-strong);border-radius:99px;padding:8px 16px}
+.recent i{font-style:normal;color:var(--faint)}
+
+.empty{color:var(--faint);font-style:italic;font-family:var(--serif);font-size:1.05rem}
+
+.cta{margin-top:9vh;text-align:center}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:.16em;text-transform:uppercase;border:none;cursor:pointer;
+  border-radius:999px;padding:17px 34px;color:#241804;background:linear-gradient(100deg,var(--gold),var(--gold-hi) 55%,var(--gold));
+  text-decoration:none;display:inline-flex;align-items:center;gap:.6em;margin:0 8px 12px}
+.btn.ghost{background:none;color:var(--soft);border:1px solid var(--line-strong)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.foot{margin-top:7vh;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--faint)}
+@media(prefers-reduced-motion:reduce){.glow span{animation:none!important}.bar i{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow"><span class="a"></span><span class="b"></span></div>
+<div class="grain"></div>
+
+<main class="wrap">
+  <p class="eyebrow">Silver Jubilee · The Scoreboard</p>
+  <h1>The batch is <em>coming home.</em></h1>
+  <p class="sub">Live count of who is in. Updated the moment a name lands. Seven branches, one board, and twenty-five years of bragging rights on the line.</p>
+
+  <div class="bignum"><span class="n" id="regN">–</span><span class="of">of <span id="batchN">269</span> home</span></div>
+  <div class="bar"><i id="totalBar"></i></div>
+  <div class="milestone" id="milestone">counting&hellip;</div>
+
+  <div class="ch"><span class="no">01</span><span class="rule"></span><span class="name">The branch battle</span></div>
+  <div id="branches"><p class="empty">Loading the standings&hellip;</p></div>
+
+  <div class="ch"><span class="no">02</span><span class="rule"></span><span class="name">Recruiters &middot; who brought whom</span></div>
+  <div id="refs"><p class="empty">Nobody has claimed a recruit yet. Share your link from the registration page; the first name on this board owns it for life.</p></div>
+
+  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">Recently home</span></div>
+  <div id="recent"><p class="empty">The board is waiting for its first name.</p></div>
+
+  <div class="cta">
+    <a class="btn" href="index.html#register">Add your name</a>
+    <a class="btn ghost" id="shareBtn" target="_blank" rel="noopener">Spread the word</a>
+  </div>
+  <div class="foot">Batch of 1998&ndash;2002 · College of Technology · refreshes on its own</div>
+</main>
+
+<script>
+const SUPABASE_URL  = "https://ngfhcbtbulgeoaxlhmwk.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU";
+const H={'apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON};
+const get=v=>fetch(SUPABASE_URL+'/rest/v1/'+v,{headers:H}).then(r=>r.json());
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const inv='Our Silver Jubilee reunion is on. Batch of 1998-2002, College of Technology, Pantnagar. Add your name, it takes one minute:\nhttps://myexperimentswithtruth.github.io/reunion-1998-2002/';
+document.getElementById('shareBtn').href='https://wa.me/?text='+encodeURIComponent(inv);
+
+function milestoneLine(reg,total){
+  if(reg===0)  return 'the board is empty. be the first name on it';
+  if(reg<25)   return 'the first twenty-five are the founders. '+(25-reg)+' founder seats left';
+  if(reg<100)  return reg+' home. the century mark is '+(100-reg)+' names away';
+  if(reg<total)return 'past a hundred. now we find every last one of the '+(total-reg)+' missing';
+  return 'all '+total+' accounted for. see you at Pantnagar';
+}
+
+async function load(){
+  try{
+    const [t]=await get('stats_totals?select=*');
+    document.getElementById('regN').textContent=t.registered;
+    document.getElementById('batchN').textContent=t.batch_size;
+    document.getElementById('totalBar').style.width=Math.max(1,100*t.registered/t.batch_size)+'%';
+    document.getElementById('milestone').textContent=milestoneLine(t.registered,t.batch_size);
+
+    const br=await get('stats_branches?select=*');
+    br.sort((a,b)=> (b.registered/b.batch)-(a.registered/a.batch) || b.registered-a.registered);
+    const anyIn=br.some(b=>b.registered>0);
+    document.getElementById('branches').innerHTML=br.map((b,i)=>{
+      const pct=Math.round(100*b.registered/b.batch);
+      const lead=anyIn&&i===0;
+      return '<div class="branch'+(lead?' leader':'')+'">'
+        +'<div class="top"><span class="bn">'+esc(b.branch)+(lead?' <span class="lead-tag">leading</span>':'')+'</span>'
+        +'<span class="score">'+b.registered+' of '+b.batch+' &middot; '+pct+'%</span></div>'
+        +'<div class="bar"><i style="width:'+Math.max(1,pct)+'%"></i></div></div>';
+    }).join('');
+
+    const refs=await get('stats_referrers?select=*');
+    if(refs.length){
+      document.getElementById('refs').innerHTML='<ol class="refs">'+refs.map(r=>
+        '<li><span class="who">'+esc(r.referrer)+'</span><span class="n">brought '+r.brought+'</span></li>').join('')+'</ol>';
+    }
+
+    const rec=await get('stats_recent?select=*');
+    if(rec.length){
+      document.getElementById('recent').innerHTML='<div class="recent">'+rec.map(x=>
+        '<span>'+esc(x.first_name)+(x.last_initial?' '+esc(x.last_initial)+'.':'')+' <i>&middot; '+esc((x.branch||'').replace(' Engineering',''))+' &middot; '+esc(x.current_city||'')+'</i></span>').join('')+'</div>';
+    }
+  }catch(e){}
+}
+load();
+setInterval(load, 90000);
+</script>
+</body>
+</html>

@@ -1,17 +1,47 @@
-# Keeps the free-tier Supabase project awake (it pauses after ~a week of silence).
-# The anon key here is the same public, insert-only key already shipped in index.html.
+# Watchdog for the registration stack. Three duties:
+#  1. Pings Supabase daily so the free-tier project never pauses for inactivity.
+#  2. Asserts all three legs answer correctly (database, wa-link function, live page);
+#     any failure fails the run and GitHub emails the repo owner.
+#  3. Commits a heartbeat if the repo has been quiet ~a month, so GitHub never
+#     disables this schedule for repo inactivity (it does after 60 quiet days).
+# The key below is the same public, insert-only anon key already shipped in index.html.
 name: keepalive
 on:
   schedule:
-    - cron: '17 3 */3 * *'
+    - cron: '17 3 * * *'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
-  ping:
+  watchdog:
     runs-on: ubuntu-latest
+    env:
+      URL: https://ngfhcbtbulgeoaxlhmwk.supabase.co
+      KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU
     steps:
-      - name: Ping Supabase
+      - uses: actions/checkout@v4
+      - name: Database must answer with the scoreboard
         run: |
-          curl -s -o /dev/null -w 'rest %{http_code}
-'             'https://ngfhcbtbulgeoaxlhmwk.supabase.co/rest/v1/responses?select=id&limit=1'             -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU'
-          curl -s -o /dev/null -w 'fn %{http_code}
-'             'https://ngfhcbtbulgeoaxlhmwk.supabase.co/functions/v1/wa-link'             -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZmhjYnRidWxnZW9heGxobXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMjg1MDIsImV4cCI6MjEwMDcwNDUwMn0.zUAICSvjg7UXHr8OvzWF4kErphDNnV5jQ7spOUWQCbU'
+          BODY=$(curl -sf "$URL/rest/v1/stats_totals?select=*" -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "$BODY"
+          echo "$BODY" | grep -q '"batch_size":269'
+      - name: WhatsApp link function must be configured
+        run: |
+          curl -sf "$URL/functions/v1/wa-link" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" | grep -q 'wa.me'
+      - name: Live page must be the real form
+        run: |
+          curl -sf "https://myexperimentswithtruth.github.io/reunion-1998-2002/?cb=$RANDOM" | grep -q 'supabase.co'
+      - name: Heartbeat if the repo has been quiet for 25 days
+        run: |
+          LAST=$(git log -1 --format=%ct)
+          NOW=$(date +%s)
+          if [ $(( NOW - LAST )) -gt 2160000 ]; then
+            date -u +%FT%TZ > .heartbeat
+            git config user.name 'reunion-watchdog'
+            git config user.email 'actions@users.noreply.github.com'
+            git add .heartbeat
+            git commit -m 'watchdog heartbeat'
+            git push
+          else
+            echo "repo active recently, no heartbeat needed"
+          fi
