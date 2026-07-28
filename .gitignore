@@ -1,7 +1,18 @@
 backend/
 backend.sh
-supabase/
 backend-supabase.sh
 node_modules/
 .clasp.json
 .DS_Store
+.gstack/
+
+# Supabase: schema is tracked, data never is. This repository is public. The
+# roster carries names, ID numbers, phone numbers and email addresses for the
+# whole batch, including people who never registered and so never opted in to
+# appear anywhere. It stays out, and so does local CLI state.
+supabase/*
+!supabase/config.toml
+!supabase/functions/
+!supabase/migrations/
+supabase/seed/
+supabase/roster_values.sql
