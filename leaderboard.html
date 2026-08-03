@@ -57,10 +57,15 @@ h1 em{font-style:italic;color:var(--gold)}
 .reg-branch{margin-bottom:2.4em}
 .reg-branch h4{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin-bottom:1em}
 .reg-branch h4 i{font-style:normal;color:var(--gold);letter-spacing:.1em;margin-left:.8em}
+.reg-branch h4 i.pending{color:var(--faint)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips span{font-family:var(--mono);font-size:11.5px;border-radius:99px;padding:7px 14px}
 .chips .in{color:var(--gold-hi);border:1px solid var(--gold-dim)}
 .chips .out{color:var(--faint);border:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:2.4em;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.7em;vertical-align:middle}
+.legend .k-in b{background:var(--gold)}
+.legend .k-out b{border:1px solid var(--line-strong)}
 
 .recent{display:flex;flex-wrap:wrap;gap:10px}
 .recent span{font-family:var(--mono);font-size:12px;color:var(--soft);border:1px solid var(--line-strong);border-radius:99px;padding:8px 16px}
@@ -98,8 +103,9 @@ h1 em{font-style:italic;color:var(--gold)}
   <div class="ch"><span class="no">02</span><span class="rule"></span><span class="name">Recently home</span></div>
   <div id="recent"><p class="empty">The board is waiting for its first name.</p></div>
 
-  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">The register &middot; who is home</span></div>
-  <p class="sub" style="margin-bottom:2em">Every name that has come home so far, branch by branch. Names only, nothing more. Missing yours? The form takes a minute.</p>
+  <div class="ch"><span class="no">03</span><span class="rule"></span><span class="name">The register &middot; who is home, who is still out</span></div>
+  <p class="sub" style="margin-bottom:1.6em">The whole batch, branch by branch. Names in gold are home. The faint ones are still out. Names only, nothing more. If you recognise a name in the faint list, you are the person best placed to call them.</p>
+  <div class="legend"><span class="k-in"><b></b>Home</span><span class="k-out"><b></b>Still to register</span></div>
   <div id="register"><p class="empty">Opening the register&hellip;</p></div>
 
   <div class="cta">
@@ -153,14 +159,19 @@ async function load(){
         '<span>'+esc(x.first_name)+(x.last_initial?' '+esc(x.last_initial)+'.':'')+' <i>&middot; '+esc((x.branch||'').replace(' Engineering',''))+'</i></span>').join('')+'</div>';
     }
 
+    // The register carries the whole batch: those home in gold, those still out
+    // in faint. Within a branch, home names lead so the board reads as progress.
     const dir=await get('stats_directory?select=*&order=branch,name&limit=1000');
     if(dir.length){
       const groups={};
       dir.forEach(x=>{const b=x.branch||'Being placed on the records';(groups[b]=groups[b]||[]).push(x)});
-      document.getElementById('register').innerHTML=Object.keys(groups).map(b=>{
+      document.getElementById('register').innerHTML=Object.keys(groups).sort().map(b=>{
         const g=groups[b];
-        return '<div class="reg-branch"><h4>'+esc(b)+'<i>'+g.length+' home</i></h4><div class="chips">'
-          +g.map(x=>'<span class="in">'+esc(x.name)+'</span>').join('')
+        const home=g.filter(x=>x.registered), out=g.filter(x=>!x.registered);
+        return '<div class="reg-branch"><h4>'+esc(b)+'<i>'+home.length+' home</i>'
+          +(out.length?'<i class="pending">'+out.length+' still out</i>':'')+'</h4><div class="chips">'
+          +home.map(x=>'<span class="in">'+esc(x.name)+'</span>').join('')
+          +out.map(x=>'<span class="out">'+esc(x.name)+'</span>').join('')
           +'</div></div>';
       }).join('');
     }

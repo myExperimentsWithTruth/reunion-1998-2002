@@ -6,4 +6,6 @@ The form collects six fields: name, college ID, branch, mobile, current city, em
 
 No roster data, readable credentials, or contact numbers live in this repository. The committee WhatsApp number is served at runtime by a private function, and the button does not render when it is unreachable. A scheduled workflow pings the backend so the free-tier project never sleeps.
 
-`supabase/migrations` carries the schema: tables, row level security, validation, and the public views. It carries no data. The batch roster is loaded separately from a private seed that stays out of this repository, because it lists everyone in the batch, including those who never registered and so never opted in to appear anywhere.
+`supabase/migrations` carries the schema: tables, row level security, validation, and the public views. It carries no data. The batch roster is loaded separately from a private seed that stays out of this repository, because it carries ID numbers, phone numbers and email addresses for the whole batch.
+
+The public scoreboard shows the register as a roll call: every name in the batch, marked home or still to register, branch by branch. Names and branch only. Nothing else about a batchmate who has not registered is exposed.

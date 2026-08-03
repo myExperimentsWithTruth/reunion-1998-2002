@@ -8,8 +8,8 @@ node_modules/
 
 # Supabase: schema is tracked, data never is. This repository is public. The
 # roster carries names, ID numbers, phone numbers and email addresses for the
-# whole batch, including people who never registered and so never opted in to
-# appear anywhere. It stays out, and so does local CLI state.
+# whole batch. The scoreboard publishes name and branch only; everything else
+# stays out, and so does local CLI state.
 supabase/*
 !supabase/config.toml
 !supabase/functions/
